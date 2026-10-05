@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Sweet Portfolio | 甜心作品集入口</title>
+    <!-- Google Fonts 引入可愛圓潤的字型 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-pink: #ffb6c1;
+            --soft-pink: #ffeff2;
+            --lavender: #e6e6fa;
+            --peach: #ffe5d9;
+            --mint: #e8f7f0;
+            --card-bg: rgba(255, 255, 255, 0.75);
+            --text-dark: #6c5ce7;
+            --text-main: #5a4b7c;
+            --text-light: #9b8ab8;
+            --locked-bg: rgba(230, 230, 240, 0.5);
+            --shadow-soft: 0 10px 25px rgba(255, 182, 193, 0.3);
+            --shadow-glow: 0 0 20px rgba(255, 182, 193, 0.8);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', 'Fredoka', cursive, sans-serif;
+            background: linear-gradient(135deg, #ffe6eb 0%, #e8e3f9 50%, #ffe5d9 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 背景夢幻飄浮微粒 */
+        .bg-bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: floatUp 12s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.2) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 容器總體佈局 */
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 頂部大頭貼與個人簡介區塊 */
+        .profile-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 30px;
+            padding: 30px 40px;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 650px;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-3px);
+        }
+
+        /* 大頭貼外框與脈動光圈效果 */
+        .avatar-wrapper {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 18px;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 8px 20px rgba(255, 140, 160, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .avatar-aura {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            background: linear-gradient(45deg, #ff9a9e, #fecfef, #a1c4fd);
+            border-radius: 50%;
+            z-index: 1;
+            animation: rotateAura 4s linear infinite;
+            filter: blur(4px);
+        }
+
+        @keyframes rotateAura {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .user-name {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #523f6e;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .user-subtitle {
+            font-size: 1rem;
+            color: #8c7aa9;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        /* 解鎖進度條 */
+        .progress-box {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 12px 20px;
+            border: 1.5px solid rgba(255, 182, 193, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #6a538c;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 14px;
+            background: #eee6f3;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: calc(2 / 16 * 100%); /* 目前進度 2/16 */
+            background: linear-gradient(90deg, #ff9a9e 0%, #fecfef 100%);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 154, 158, 0.8);
+            transition: width 1s ease-in-out;
+        }
+
+        /* 作品集 16 關卡 Grid 網格系統 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 桌機版 4x4 排列 */
+            gap: 22px;
+            width: 100%;
+        }
+
+        /* 卡片通用基礎樣式 */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 22px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 20px rgba(180, 160, 200, 0.15);
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            min-height: 135px;
+        }
+
+        /* --- 已解鎖卡片樣式 (Unlocked) --- */
+        .card.unlocked {
+            cursor: pointer;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 240, 245, 0.9) 100%);
+        }
+
+        /* 已解鎖卡片標籤徽章 */
+        .card.unlocked .badge {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            background: #ffb3c6;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(255, 179, 198, 0.4);
+        }
+
+        .card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .card-title {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #4a3e63;
+            text-align: center;
+            line-height: 1.35;
+        }
+
+        /* 已解鎖 Hover 動畫特效 */
+        .card.unlocked:hover {
+            transform: translateY(-8px) scale(1.04);
+            box-shadow: var(--shadow-glow), 0 15px 30px rgba(255, 154, 158, 0.3);
+            border-color: #ffb6c1;
+        }
+
+        .card.unlocked:hover .card-icon {
+            transform: scale(1.2) rotate(8deg);
+        }
+
+        /* 光暈亮光掃過效果 (Shine Effect) */
+        .card.unlocked::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 50%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.6) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            transition: all 0.6s ease;
+        }
+
+        .card.unlocked:hover::after {
+            left: 130%;
+        }
+
+        /* --- 未解鎖卡片樣式 (Locked) --- */
+        .card.locked {
+            background: var(--locked-bg);
+            border-color: rgba(220, 220, 235, 0.6);
+            cursor: not-allowed;
+            opacity: 0.75;
+        }
+
+        .card.locked .card-title {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .card.locked .lock-icon {
+            font-size: 2rem;
+            margin-bottom: 6px;
+            filter: grayscale(30%);
+            display: inline-block;
+        }
+
+        /* 未解鎖 Hover 鎖頭 Shake 搖晃效果 */
+        .card.locked:hover {
+            transform: translateY(-2px);
+            background: rgba(235, 235, 245, 0.85);
+            border-color: #d1c4e9;
+        }
+
+        .card.locked:hover .lock-icon {
+            animation: lockShake 0.4s ease-in-out infinite;
+        }
+
+        @keyframes lockShake {
+            0%, 100% { transform: rotate(0deg); }
+            20% { transform: rotate(-12deg); }
+            40% { transform: rotate(12deg); }
+            60% { transform: rotate(-8deg); }
+            80% { transform: rotate(8deg); }
+        }
+
+        /* 響應式排版 (Responsive Media Queries) */
+        @media (max-width: 900px) {
+            .grid-container {
+                grid-template-columns: repeat(3, 1fr); /* 平板電腦 3 行 */
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 20px 15px;
+            }
+
+            .profile-card {
+                padding: 22px 20px;
+                border-radius: 24px;
+            }
+
+            .user-name {
+                font-size: 1.6rem;
+            }
+
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr); /* 手機 2 行，保持美觀與易按點擊 */
+                gap: 14px;
+            }
+
+            .card {
+                padding: 16px 12px;
+                min-height: 120px;
+                border-radius: 20px;
+            }
+
+            .card-title {
+                font-size: 0.88rem;
+            }
+        }
+
+        /* 底部版權宣告 */
+        footer {
+            margin-top: 45px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 夢幻動態漂浮背景背景 -->
+    <div class="bg-bubbles" id="bubbleContainer"></div>
+
+    <div class="container">
+        
+        <!-- 頂部大頭貼與個人簡介區塊 -->
+        <header class="profile-card">
+            <div class="avatar-wrapper">
+                <div class="avatar-aura"></div>
+                <!-- 預設可愛甜美大頭貼 (採用 Unsplash 高畫質插畫假圖) -->
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="大頭貼" class="avatar-img" onerror="this.src='https://placehold.co/130x130/ffb6c1/ffffff?text=Me';">
+            </div>
+            
+            <!-- 請替換為您的名字 -->
+            <h1 class="user-name">甜心同學 💕</h1>
+            <p class="user-subtitle">✨ 網頁程式設計 · 學習冒險之旅 ✨</p>
+            
+            <!-- 解鎖關卡進度條 -->
+            <div class="progress-box">
+                <div class="progress-info">
+                    <span>🎮 任務解鎖進度</span>
+                    <span>2 / 16 完成</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 16 個關卡作品網格區塊 -->
+        <main class="grid-container">
+
+            <!-- 關卡 1 (已解鎖) -->
+            <a href="w1/index.html" class="card unlocked">
+                <span class="badge">OPEN</span>
+                <div class="card-icon">🎴</div>
+                <div class="card-title">Week 1<br>數位名片</div>
+            </a>
+
+            <!-- 關卡 2 (已解鎖) -->
+            <a href="w2/index.html" class="card unlocked">
+                <span class="badge">OPEN</span>
+                <div class="card-icon">🍱</div>
+                <div class="card-title">Week 2<br>今天吃甚麼?</div>
+            </a>
+
+            <!-- 關卡 3 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 3<br>尚未解鎖</div>
+            </div>
+
+            <!-- 關卡 4 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 4<br>尚未解鎖</div>
+            </div>
+
+            <!-- 關卡 5 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 5<br>尚未解鎖</div>
+            </div>
+
+            <!-- 關卡 6 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 6<br>尚未解鎖</div>
+            </div>
+
+            <!-- 關卡 7 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 7<br>尚未解鎖</div>
+            </div>
+
+            <!-- 關卡 8 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 8<br>尚未解鎖</div>
+            </div>
+
+            <!-- 關卡 9 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 9<br>尚未解鎖</div>
+            </div>
+
+            <!-- 關卡 10 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 10<br>尚未解鎖</div>
+            </div>
+
+            <!-- 關卡 11 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 11<br>尚未解鎖</div>
+            </div>
+
+            <!-- 關卡 12 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 12<br>尚未解鎖</div>
+            </div>
+
+            <!-- 關卡 13 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 13<br>尚未解鎖</div>
+            </div>
+
+            <!-- 關卡 14 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 14<br>尚未解鎖</div>
+            </div>
+
+            <!-- 關卡 15 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 15<br>尚未解鎖</div>
+            </div>
+
+            <!-- 關卡 16 (未解鎖) -->
+            <div class="card locked">
+                <div class="lock-icon">🔒</div>
+                <div class="card-title">Week 16<br>尚未解鎖</div>
+            </div>
+
+        </main>
+
+        <footer>
+            <p>© 2026 My Web Class Learning Journey · Made with Sweet Style 💕</p>
+        </footer>
+    </div>
+
+    <!-- 自動生成飄浮微粒氣泡的小腳本 -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const container = document.getElementById("bubbleContainer");
+            const bubbleCount = 15; // 氣泡數量
+
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement("div");
+                bubble.classList.add("bubble");
+                
+                // 隨機尺寸、位置與動畫延遲
+                const size = Math.random() * 20 + 10 + "px";
+                bubble.style.width = size;
+                bubble.style.height = size;
+                bubble.style.left = Math.random() * 100 + "%";
+                bubble.style.animationDelay = Math.random() * 8 + "s";
+                bubble.style.animationDuration = Math.random() * 6 + 8 + "s";
+                
+                container.appendChild(bubble);
+            }
+        });
+    </script>
+</body>
+</html>
