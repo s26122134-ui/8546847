@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SweetMeme Studio 🌸 甜美清新迷因產生器</title>
+    
+    <!-- Tailwind CSS 框架 (快速版面佈局) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome 圖示庫 (可愛圖示) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts 甜美圓潤字型 (Zen Maru Gothic & Mochiy Pop One & Noto Sans TC) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Noto+Sans+TC:wght@500;700;900&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- html2canvas 網頁截圖下載套件 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        /* 全域甜美字型與軟萌背景色彩 */
+        body {
+            font-family: 'Zen Maru Gothic', 'Noto Sans TC', sans-serif;
+            background-color: #fff9f5; /* 柔和奶油底色 */
+            background-image: 
+                radial-gradient(#ffd6e0 2px, transparent 2px), 
+                radial-gradient(#ffd6e0 2px, #fff9f5 2px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            color: #5c4b51;
+        }
+
+        /* 標題與可愛標籤專用字型 */
+        .title-font {
+            font-family: 'Mochiy Pop One', cursive, sans-serif;
+        }
+
+        /* 迷因文字預設樣式 */
+        .meme-text-style {
+            font-family: 'Zen Maru Gothic', 'Noto Sans TC', sans-serif;
+            font-weight: 900;
+            line-height: 1.2;
+            word-wrap: break-word;
+            user-select: none;
+        }
+
+        /* 甜美馬卡龍卡片包裝 (Pastel Card) */
+        .sweet-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            border: 3px solid #ffe5ec;
+            box-shadow: 0 10px 25px -5px rgba(255, 182, 193, 0.3), 0 8px 10px -6px rgba(255, 182, 193, 0.2);
+            border-radius: 2rem;
+        }
+
+        /* 可愛粉彩陰影按鈕與膠囊 */
+        .sweet-btn {
+            background: linear-gradient(135deg, #ffb3c6 0%, #ff8fa3 100%);
+            box-shadow: 0 6px 18px rgba(255, 143, 163, 0.4);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .sweet-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 22px rgba(255, 143, 163, 0.5);
+        }
+
+        .sweet-btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        /* 自定義甜美滑桿 (Pastel Range Input) */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: #ffe5ec;
+            border-radius: 12px;
+            height: 10px;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 22px;
+            width: 22px;
+            border-radius: 50%;
+            background: #ff8fa3;
+            border: 3px solid #ffffff;
+            box-shadow: 0 3px 8px rgba(255, 143, 163, 0.5);
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+            background: #ff758f;
+        }
+
+        /* 自訂可愛滾動條 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fff0f3;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ffb3c6;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-4 sm:p-6 md:p-10">
+
+    <header class="max-w-6xl w-full mx-auto mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-300 to-rose-200 flex items-center justify-center shadow-md border-2 border-white">
+                <i class="fa-solid fa-wand-magic-sparkles text-white text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-black title-font text-rose-500 tracking-wide flex items-center gap-2">
+                    SweetMeme <span class="text-xs bg-pink-100 text-rose-500 px-3 py-1 rounded-full border border-pink-200 font-normal">🌸 甜美產生器</span>
+                </h1>
+                <p class="text-xs text-rose-400 font-bold mt-0.5">輕鬆製作可愛又吸睛的個人專屬梗圖～</p>
+            </div>
+        </div>
+
+        <div class="text-xs text-pink-600 bg-pink-50/90 px-4 py-2 rounded-full border border-pink-200 flex items-center gap-2 shadow-sm">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-pink-400 animate-ping"></span>
+            全本機轉檔・安全防 CORS・高清下載
+        </div>
+    </header>
+
+    <main class="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-8">
+
+        <!-- ================= 左側：甜美控制面板區 (Control Panel) ================= -->
+        <section class="lg:col-span-5 sweet-card p-6 sm:p-7 space-y-6">
+            
+            <!-- 區塊 1: 選擇底圖 -->
+            <div class="space-y-3">
+                <label class="block text-sm font-black text-rose-500 tracking-wide flex items-center gap-2">
+                    <i class="fa-solid fa-heart text-pink-400"></i> 1. 上傳迷因底圖
+                </label>
+                
+                <!-- 本機圖片上傳 (使用 FileReader 避開跨網域 CORS 問題) -->
+                <label class="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-pink-300 hover:border-pink-400 bg-pink-50/50 hover:bg-pink-100/40 rounded-2xl cursor-pointer transition-all duration-300 group">
+                    <div class="flex flex-col items-center justify-center pt-4 pb-5">
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm mb-2 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-cloud-arrow-up text-pink-400 text-lg"></i>
+                        </div>
+                        <p class="text-xs text-rose-600 font-bold">點擊上傳電腦/手機照片</p>
+                        <p class="text-[10px] text-pink-400 mt-0.5">支援 JPG, PNG, WEBP 格式</p>
+                    </div>
+                    <!-- 本地檔案選擇框 -->
+                    <input id="imageInput" type="file" accept="image/*" class="hidden" />
+                </label>
+
+                <!-- 預設可愛樣板按鈕區 -->
+                <div>
+                    <p class="text-[11px] font-bold text-pink-400 mb-2">或選擇預設粉彩樣板：</p>
+                    <div class="grid grid-cols-4 gap-2" id="sampleTemplatesContainer">
+                        <!-- JS 動態繪製與生成樣板按鈕 -->
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-pink-100">
+
+            <!-- 區塊 2: 雙層文字輸入區 -->
+            <div class="space-y-4">
+                <label class="block text-sm font-black text-rose-500 tracking-wide flex items-center gap-2">
+                    <i class="fa-solid fa-pen-nib text-pink-400"></i> 2. 輸入迷因文字
+                </label>
+
+                <!-- 上方文字 input -->
+                <div class="space-y-1">
+                    <span class="text-xs font-bold text-pink-400">上方文字 (Top Text)</span>
+                    <input id="topTextInput" type="text" value="今天又是充滿希望的" placeholder="輸入上方文字..." 
+                           class="w-full bg-white border-2 border-pink-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 font-bold focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition-all">
+                </div>
+
+                <!-- 下方文字 input -->
+                <div class="space-y-1">
+                    <span class="text-xs font-bold text-pink-400">下方文字 (Bottom Text)</span>
+                    <input id="bottomTextInput" type="text" value="可愛迷因天！🌸" placeholder="輸入下方文字..." 
+                           class="w-full bg-white border-2 border-pink-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 font-bold focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition-all">
+                </div>
+            </div>
+
+            <hr class="border-pink-100">
+
+            <!-- 區塊 3: 參數滑桿控制 (字體大小與垂直位置) -->
+            <div class="space-y-4">
+                <label class="block text-sm font-black text-rose-500 tracking-wide flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-pink-400"></i> 3. 微調樣式與位置
+                </label>
+
+                <!-- 滑桿：字體大小 -->
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-bold">
+                        <span class="text-slate-600">字體大小 (Font Size)</span>
+                        <span id="fontSizeValue" class="text-rose-500 font-mono">38px</span>
+                    </div>
+                    <input id="fontSizeSlider" type="range" min="16" max="72" value="38" class="w-full">
+                </div>
+
+                <!-- 滑桿：上方文字垂直位置 (Top Offset) -->
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-bold">
+                        <span class="text-slate-600">上方文字位置 (Top)</span>
+                        <span id="topPosValue" class="text-rose-500 font-mono">6%</span>
+                    </div>
+                    <input id="topPosSlider" type="range" min="0" max="80" value="6" class="w-full">
+                </div>
+
+                <!-- 滑桿：下方文字垂直位置 (Bottom Offset) -->
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-bold">
+                        <span class="text-slate-600">下方文字位置 (Bottom)</span>
+                        <span id="bottomPosValue" class="text-rose-500 font-mono">6%</span>
+                    </div>
+                    <input id="bottomPosSlider" type="range" min="0" max="80" value="6" class="w-full">
+                </div>
+
+                <!-- 顏色選擇器 (文字顏色 & 描邊顏色) -->
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <div class="flex items-center gap-2 bg-white p-2 rounded-xl border-2 border-pink-100">
+                        <input id="textColorPicker" type="color" value="#ffffff" class="w-8 h-8 rounded-lg border-0 cursor-pointer bg-transparent">
+                        <span class="text-xs font-bold text-slate-600">文字顏色</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white p-2 rounded-xl border-2 border-pink-100">
+                        <input id="strokeColorPicker" type="color" value="#000000" class="w-8 h-8 rounded-lg border-0 cursor-pointer bg-transparent">
+                        <span class="text-xs font-bold text-slate-600">文字描邊</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 下載按鈕 -->
+            <div class="pt-2">
+                <button id="downloadBtn" class="w-full py-4 px-6 rounded-2xl font-black text-white tracking-wider sweet-btn flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-sparkles text-lg"></i>
+                    <span>匯出超可愛迷因 (my-meme.png)</span>
+                </button>
+            </div>
+
+        </section>
+
+        <!-- ================= 右側：迷因即時預覽區 (Meme Preview Area) ================= -->
+        <section class="lg:col-span-7 flex flex-col items-center w-full">
+            
+            <div class="w-full flex items-center justify-between mb-3 px-2">
+                <span class="text-xs font-black uppercase tracking-wider text-rose-500 flex items-center gap-2">
+                    <i class="fa-solid fa-face-smile-wink"></i> 即時預覽 (Live Preview)
+                </span>
+                <span class="text-[11px] font-bold text-pink-400">畫質高達 2X 輸出</span>
+            </div>
+
+            <!-- html2canvas 截圖下載的容器 (#memeCanvasArea) -->
+            <div class="w-full sweet-card p-3 sm:p-4 flex items-center justify-center overflow-hidden min-h-[380px]">
+                
+                <!-- 預覽畫布外框 -->
+                <div id="memeCanvasArea" class="relative max-w-full overflow-hidden rounded-2xl shadow-lg bg-pink-100/50 flex justify-center items-center">
+                    
+                    <!-- 底圖 -->
+                    <img id="memeImage" src="" alt="Meme Image" class="max-h-[60vh] w-auto object-contain block mx-auto select-none rounded-2xl">
+
+                    <!-- 上方文字 -->
+                    <div id="memeTopText" class="absolute left-0 right-0 text-center meme-text-style px-4 pointer-events-none" style="top: 6%;">
+                        今天又是充滿希望的
+                    </div>
+
+                    <!-- 下方文字 -->
+                    <div id="memeBottomText" class="absolute left-0 right-0 text-center meme-text-style px-4 pointer-events-none" style="bottom: 6%;">
+                        可愛迷因天！🌸
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="max-w-6xl w-full mx-auto text-center py-4 text-xs font-bold text-pink-400/80">
+        <p>SweetMeme Studio &copy; 2026 | 甜美清新風格・純前端隱私保護</p>
+    </footer>
+
+    <script>
+        // 當 DOM 網頁結構載入完成後執行
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. 取得頁面上的 DOM 元素 (Element Selection)
+            const imageInput = document.getElementById('imageInput');
+            const memeImage = document.getElementById('memeImage');
+            const memeCanvasArea = document.getElementById('memeCanvasArea');
+
+            const topTextInput = document.getElementById('topTextInput');
+            const bottomTextInput = document.getElementById('bottomTextInput');
+            const memeTopText = document.getElementById('memeTopText');
+            const memeBottomText = document.getElementById('memeBottomText');
+
+            const fontSizeSlider = document.getElementById('fontSizeSlider');
+            const fontSizeValue = document.getElementById('fontSizeValue');
+
+            const topPosSlider = document.getElementById('topPosSlider');
+            const topPosValue = document.getElementById('topPosValue');
+
+            const bottomPosSlider = document.getElementById('bottomPosSlider');
+            const bottomPosValue = document.getElementById('bottomPosValue');
+
+            const textColorPicker = document.getElementById('textColorPicker');
+            const strokeColorPicker = document.getElementById('strokeColorPicker');
+
+            const downloadBtn = document.getElementById('downloadBtn');
+            const sampleTemplatesContainer = document.getElementById('sampleTemplatesContainer');
+
+            // 2. 生成粉彩風格預設底圖 (使用 HTML5 Canvas 畫圖生成 DataURL，免網址且免 CORS)
+            const defaultTemplates = [
+                { name: '草莓牛奶', color1: '#ffb3c6', color2: '#ff8fa3', emoji: '🍓' },
+                { name: '薄荷抹茶', color1: '#c0fdfb', color2: '#64dfdf', emoji: '🌱' },
+                { name: '奶油起司', color1: '#ffeb3b', color2: '#fbc02d', emoji: '🧀' },
+                { name: '芋泥波波', color1: '#e0aaff', color2: '#c77dff', emoji: '🧋' }
+            ];
+
+            // 繪製可供測試用的軟萌圖片 DataURL
+            function createPastelImage(t) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 600;
+                canvas.height = 500;
+                const ctx = canvas.getContext('2d');
+
+                // 漸層背景
+                const grad = ctx.createLinearGradient(0, 0, 600, 500);
+                grad.addColorStop(0, t.color1);
+                grad.addColorStop(1, t.color2);
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, 600, 500);
+
+                // 畫一些可愛的小裝飾波點
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                for (let i = 0; i < 20; i++) {
+                    const x = (i * 70) % 600;
+                    const y = (i * 90) % 500;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 20 + (i % 3) * 10, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Emoji 與標題
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '80px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(t.emoji, 300, 240);
+
+                ctx.font = 'bold 28px sans-serif';
+                ctx.fillText(`- ${t.name} -`, 300, 310);
+
+                return canvas.toDataURL();
+            }
+
+            // 動態創建樣板按鈕
+            defaultTemplates.forEach((template, index) => {
+                const dataUrl = createPastelImage(template);
+                const btn = document.createElement('button');
+                btn.className = 'h-12 rounded-xl border-2 border-pink-200 overflow-hidden hover:border-pink-400 hover:scale-105 transition-all focus:outline-none relative group shadow-sm';
+                btn.innerHTML = `<img src="${dataUrl}" class="w-full h-full object-cover">
+                                 <span class="absolute inset-0 bg-pink-900/30 flex items-center justify-center text-[10px] font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity">${template.name}</span>`;
+                
+                btn.addEventListener('click', () => {
+                    memeImage.src = dataUrl;
+                });
+
+                sampleTemplatesContainer.appendChild(btn);
+
+                // 預設載入第一個圖片
+                if (index === 0) {
+                    memeImage.src = dataUrl;
+                }
+            });
+
+            // 3. 本機圖片上傳處理 (FileReader API 避開 CORS 錯誤)
+            imageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    
+                    // 當檔案讀取完成時，設定為預覽圖來源
+                    reader.onload = (event) => {
+                        memeImage.src = event.target.result;
+                    };
+                    
+                    // 以 DataURL 格式讀取
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // 4. 即時更新迷因樣式與文字 (Live Preview Update)
+            function updateMemePreview() {
+                // 文字內容
+                memeTopText.textContent = topTextInput.value || '';
+                memeBottomText.textContent = bottomTextInput.value || '';
+
+                // 字體大小
+                const size = fontSizeSlider.value;
+                memeTopText.style.fontSize = `${size}px`;
+                memeBottomText.style.fontSize = `${size}px`;
+                fontSizeValue.textContent = `${size}px`;
+
+                // 上方文字位置
+                const topPos = topPosSlider.value;
+                memeTopText.style.top = `${topPos}%`;
+                topPosValue.textContent = `${topPos}%`;
+
+                // 下方文字位置
+                const bottomPos = bottomPosSlider.value;
+                memeBottomText.style.bottom = `${bottomPos}%`;
+                bottomPosValue.textContent = `${bottomPos}%`;
+
+                // 文字顏色與粗描邊效果 (使用強效的多重 text-shadow 確保清晰可讀)
+                const textColor = textColorPicker.value;
+                const strokeColor = strokeColorPicker.value;
+
+                [memeTopText, memeBottomText].forEach(textEl => {
+                    textEl.style.color = textColor;
+                    textEl.style.textShadow = `
+                        -2px -2px 0 ${strokeColor},  
+                         2px -2px 0 ${strokeColor},
+                        -2px  2px 0 ${strokeColor},
+                         2px  2px 0 ${strokeColor},
+                        -3px  0px 0 ${strokeColor},
+                         3px  0px 0 ${strokeColor},
+                         0px -3px 0 ${strokeColor},
+                         0px  3px 0 ${strokeColor},
+                         0px  4px 8px rgba(0,0,0,0.3)
+                    `;
+                });
+            }
+
+            // 5. 綁定監聽事件 (Event Listeners)
+            topTextInput.addEventListener('input', updateMemePreview);
+            bottomTextInput.addEventListener('input', updateMemeStyles = updateMemePreview);
+            fontSizeSlider.addEventListener('input', updateMemePreview);
+            topPosSlider.addEventListener('input', updateMemePreview);
+            bottomPosSlider.addEventListener('input', updateMemePreview);
+            textColorPicker.addEventListener('input', updateMemePreview);
+            strokeColorPicker.addEventListener('input', updateMemePreview);
+
+            // 初始執行一次更新
+            updateMemePreview();
+
+            // 6. 一鍵截圖下載 (html2canvas)
+            downloadBtn.addEventListener('click', () => {
+                const originalBtnText = downloadBtn.innerHTML;
+                downloadBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>製作中...</span>`;
+                downloadBtn.disabled = true;
+
+                // 使用 html2canvas 將 #memeCanvasArea 區塊轉為高解析度 Canvas
+                html2canvas(memeCanvasArea, {
+                    scale: 2, // 2倍高解析度
+                    useCORS: true,
+                    backgroundColor: null,
+                    logging: false
+                }).then(canvas => {
+                    // 自動觸發下載
+                    const downloadLink = document.createElement('a');
+                    downloadLink.download = 'my-meme.png';
+                    downloadLink.href = canvas.toDataURL('image/png');
+                    downloadLink.click();
+
+                    // 按鈕成功回饋
+                    downloadBtn.innerHTML = `<i class="fa-solid fa-check text-lg"></i> <span>下載完成！</span>`;
+                    setTimeout(() => {
+                        downloadBtn.innerHTML = originalBtnText;
+                        downloadBtn.disabled = false;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('截圖錯誤:', err);
+                    alert('下載失敗，請嘗試選擇其他圖片！');
+                    downloadBtn.innerHTML = originalBtnText;
+                    downloadBtn.disabled = false;
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
